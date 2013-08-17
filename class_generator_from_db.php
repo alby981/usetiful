@@ -88,16 +88,19 @@ fclose($fw);
 #--------------------------------------------------------
 # CREATE THE PROJECT FOLDER - WATCH OUT THE PERMISSIONS
 #--------------------------------------------------------
+if(file_exists(PROJECT_FOLDER)){
+    die("Attenzione! <em><font color='red' weight='bold'>".PROJECT_FOLDER."</font></em> Directory gia esistente!");
+}
 if(php_uname('s')!= "Linux"){
     $old = umask(0);
     if(!@mkdir(PROJECT_FOLDER, 0777,TRUE)){
-        die("Attenzione! <em><font color='red' weight='bold'>".PROJECT_FOLDER."</font></em> directory gia esistente");
+        die("Attenzione! <em><font color='red' weight='bold'>".PROJECT_FOLDER."</font></em> Impossibile creare la directory");
     }
     umask($old);
     chmod(PROJECT_FOLDER,0777);
 }else{
     if(!@mkdir(PROJECT_FOLDER, 0777,TRUE)){
-        die("Attenzione! <em><font color='red' weight='bold'>".PROJECT_FOLDER."</font></em> directory gia esistente");
+        die("Attenzione! <em><font color='red' weight='bold'>".PROJECT_FOLDER."</font></em> Impossibile creare la directory");
     }
 }
 #this is awesome!--------------------------------------
