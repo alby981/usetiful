@@ -1,4 +1,11 @@
 <?php
+# ----------------------------------------
+# Usetiful - Php / Mysql Class generator
+# https://github.com/alby981/usetiful
+# Copyright 2013,Alberto Belotti 
+# 
+# Licensed under the MIT license:
+# http://www.opensource.org/licenses/MIT
 # -----------------------------------------
 # INCLUDES
 # -----------------------------------------
