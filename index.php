@@ -48,7 +48,7 @@
                     <p class="caption">Class generator</p>
                     <p><span class="label">Host: </span><input type="text" id="host" class="textinput" value="127.0.0.1"/></p>
                     <p><span class="label">Username: </span><input type="text" id="username" class="textinput" value="root"/></p>
-                    <p><span class="label">Password: </span><input type="text" id="password" class="textinput" value="alberto981"/></p>
+                    <p><span class="label">Password: </span><input type="password" id="password" class="textinput" value="alberto981"/></p>
                     <p><span class="label">Table Name: </span><input type="text" id="table_name" class="textinput" value=""/></p>
                     <p><span class="label">Schema Name: </span><input type="text" id="schema_name" class="textinput" value="cld"/></p>
                     <p><span class="label">Project Name (folder): </span><input type="text" id="project_name" class="textinput" value="cld2"/></p>
