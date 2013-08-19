@@ -2,7 +2,7 @@
 # ----------------------------------------
 # Usetiful - Php / Mysql Class generator
 # https://github.com/alby981/usetiful
-# Copyright 2013,Alberto Belotti 
+# Copyright 2013, Alberto Belotti 
 # 
 # Licensed under the MIT license:
 # http://www.opensource.org/licenses/MIT
@@ -32,7 +32,7 @@
                 $('#button_send').click(function(){
                     if(($('#schema_name').val().length) == 0 || ($('#project_name').val().length) == 0){
                         $('#result').show();
-                        $('#result').html('Attenzione!Schema name / Project name sono campi obbligatori!');
+                        $('#result').html('Attenzione!<br/><strong>Schema name / Project name</strong> <br/>sono campi obbligatori!');
                         return false;
                     }
                     $('#result').show();
@@ -58,14 +58,14 @@
                     <p class="caption">Class generator</p>
                     <p><span class="label">Host: </span><input type="text" id="host" class="textinput" value="127.0.0.1"/></p>
                     <p><span class="label">Username: </span><input type="text" id="username" class="textinput" value="root"/></p>
-                    <p><span class="label">Password: </span><input type="password" id="password" class="textinput" value="alberto981"/></p>
+                    <p><span class="label">Password: </span><input type="password" id="password" class="textinput" value=""/></p>
                     <p><span class="label">Table Name: </span><input type="text" id="table_name" class="textinput" value=""/></p>
-                    <p><span class="label">Schema Name: </span><input type="text" id="schema_name" class="textinput" value="cld"/></p>
-                    <p><span class="label">Project Name (folder): </span><input type="text" id="project_name" class="textinput" value="cld2"/></p>
+                    <p><span class="label">Schema Name: </span><input type="text" id="schema_name" class="textinput" value=""/></p>
+                    <p><span class="label">Project Name (folder): </span><input type="text" id="project_name" class="textinput" value=""/></p>
                     <div id="mask2"><a href="#" id="button_send"><img src="images/submit.png" border="0" alt="submit"/></a></div>
                     <div id="result"></div>
                 </div>
-                <div id="rightbar">Usetiful is... Use Beatiful!<br/><br/>Release 1.0</div>
+                <div id="rightbar">Usetiful<br/><br/>Release 1.0<br/><br/>&copy; Alberto Belotti 2013</div>
                 </div>
             </div>
         </div>

@@ -117,9 +117,9 @@ class MasterOfPuppets extends Connection {
                 $class_name_puro[] = substr($class_name_puro_string, 0, stripos($class_name_puro_string, 'extend')) . "();";
             }
 
-            $class_name_string = strtolower(preg_replace('/^get/', '', $array_class[0][$s][0]));
+            $class_name_string = preg_replace('/^get/', '', $array_class[0][$s][0]);
             $class_name_string = preg_replace("/[c|C]lass/", "", $class_name_string);
-            $class_name_string = (preg_replace("/\s/", "", $class_name_string));
+            $class_name_string = preg_replace("/\s/", "", $class_name_string);
             if (stripos($class_name_string, 'extend') === false) {
                 $class_name[] = str_replace("{", "", $class_name_string);
             } else {
