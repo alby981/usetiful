@@ -18,8 +18,8 @@ define("MSG_DATABASE","Attenzione! <em>Dati database obbligatori!!</em>");
 define("MSG_PROJECT" ,"Warning! <em>Specify project name first!</em>");
 define("MSG_SCHEMA"  ,"Warning! <em>You must specify schema name before!</em>");
 define("MASTER_SCHEMA"  ,"information_schema");
-define("DIR_CREATE_MSG","I can't create the directory!<br/> Check the folder permission.");
-define("DIR_EXIST_MSG","Directory exists!");
+define("DIR_CREATE_MSG"," I can't create the directory!<br/> Check the folder permission.");
+define("DIR_EXIST_MSG"," Directory exists!");
 # -----------------------------------------
 # CONTROLS
 # -----------------------------------------
