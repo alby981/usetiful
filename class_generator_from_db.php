@@ -18,6 +18,8 @@ define("MSG_DATABASE","Attenzione! <em>Dati database obbligatori!!</em>");
 define("MSG_PROJECT" ,"Warning! <em>Specify project name first!</em>");
 define("MSG_SCHEMA"  ,"Warning! <em>You must specify schema name before!</em>");
 define("MASTER_SCHEMA"  ,"information_schema");
+define("DIR_CREATE_MSG","I can't create the directory!<br/> Check the folder permission.");
+define("DIR_EXIST_MSG","Directory exists!");
 # -----------------------------------------
 # CONTROLS
 # -----------------------------------------
@@ -96,18 +98,18 @@ fclose($fw);
 # CREATE THE PROJECT FOLDER - WATCH OUT THE PERMISSIONS
 #--------------------------------------------------------
 if(file_exists(PROJECT_FOLDER)){
-    die("Attenzione! <em><font color='red' weight='bold'>".PROJECT_FOLDER."</font></em> Directory gia esistente!");
+    die("Warning! <em><font color='red' weight='bold'>".PROJECT_FOLDER."</font></em>".DIR_EXIST_MSG);
 }
 if(php_uname('s')!= "Linux"){
     $old = umask(0);
     if(!@mkdir(PROJECT_FOLDER, 0777,TRUE)){
-        die("Attenzione! <em><font color='red' weight='bold'>".PROJECT_FOLDER."</font></em> Impossibile creare la directory");
+        die("Warning! <em><font color='red' weight='bold'>".PROJECT_FOLDER."</font></em>".DIR_CREATE_MSG);
     }
     umask($old);
     chmod(PROJECT_FOLDER,0777);
 }else{
     if(!@mkdir(PROJECT_FOLDER, 0777,TRUE)){
-        die("Attenzione! <em><font color='red' weight='bold'>".PROJECT_FOLDER."</font></em> Impossibile creare la directory");
+        die("Warning! <em><font color='red' weight='bold'>".PROJECT_FOLDER."</font></em>".DIR_CREATE_MSG);
     }
 }
 #this is awesome!--------------------------------------
