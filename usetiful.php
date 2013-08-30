@@ -2,7 +2,7 @@
 # ----------------------------------------
 # Usetiful - Php / Mysql Class generator
 # https://github.com/alby981/usetiful
-# Copyright 2013,Alberto Belotti 
+# Copyright 2013, Alberto Belotti 
 # 
 # Licensed under the MIT license:
 # http://www.opensource.org/licenses/MIT
@@ -10,19 +10,93 @@
 
 define("TAB", "        ");
 define("A_CAPO", "\r\n");
+define("MSG_DATABASE", "Attenzione! <em>Dati database obbligatori!!</em>");
+define("MSG_PROJECT", "Warning! <em>Specify project name first!</em>");
+define("MSG_SCHEMA", "Warning! <em>You must specify schema name before!</em>");
+define("MASTER_SCHEMA", "information_schema");
+define("DIR_CREATE_MSG", " I can't create the directory!<br/> Check the folder permission.");
+define("DIR_EXIST_MSG", " Directory exists!");
 
-include_once dirname(__FILE__) . '/include/mySqlConnection.php';
-/**
- * This is the master class. In this class all operations (methods) are performed to build all.
- */
-class MasterOfPuppets extends Connection {
+# ---------------------------------
+# MYSQL CONNECTION
+# ---------------------------------
+class Connection {
+
+    protected $host;
+    protected $username;
+    protected $password;
+    protected $dbname;
+    protected static $connection;
+
+    public function __get($name) {
+        return $this->$name;
+    }
+
+    public function __set($name, $value) {
+        $this->$name = $value;
+    }
+
+    function connect() {
+        if (!self::$connection) {
+            self::$connection = mysql_connect($this->host, $this->username, $this->password);
+            if (!self::$connection) {
+                throw new Exception(die(mysql_error()));
+            }
+            if(!mysql_select_db($this->dbname)){
+                throw new Exception(die(mysql_error()));
+            }
+        }
+    }
+
+}
+# ---------------------------------
+# Usetiful Class
+# ---------------------------------
+
+class Usetiful extends Connection {
 
     private $open_php = "&lt?php";
     private $close_php = "?&gt";
     private $project_folder;
     private $filename;
     private $table_schema;
+    private $table_name;
     private $result_string = array();
+
+    function __construct($server, $username, $password, $schema, $project_name, $table = false) {
+        $username = $username;
+        $server = $server;
+        $password = $password;
+        $table_name = $table;
+        $this->filename = dirname(__FILE__) . "/class_generated.txt";
+        $this->project_folder = dirname(__FILE__) . "/" . $project_name;
+        $this->host = $server;
+        $this->username = $username;
+        $this->password = $password;
+        $this->table_name = $table_name;
+        $this->dbname = MASTER_SCHEMA;
+        $this->table_schema = $schema;
+        
+        try {
+            $this->connect();
+            $this->executeMasterQuery();
+            $filename_db = dirname(__FILE__) . "/" . $this->project_folder . "/Class.Business.php";
+            $this->getter_and_setter();
+            $this->db_object_generator();
+            $this->action_generator();
+            $this->dao_utils_generator($username, $password, $server, $schema);
+            $this->email_generator();
+            $this->validation_generator();
+            $this->trigger_generator();
+            $this->constants_generator();
+            $this->html_generator();
+            $this->generate_views();
+            $this->generate_assets();
+            echo "You did it!!!";
+        } catch (Exception $e) {
+            die($e->getMessage());
+        }
+    }
 
     function __set($name, $value) {
         $this->$name = $value;
@@ -30,6 +104,93 @@ class MasterOfPuppets extends Connection {
 
     function __get($name) {
         return $this->$name;
+    }
+
+    function executeMasterQuery() {
+        # -----------------------------------------
+        # THIS IS THE MASTER QUERY. IT TAKES ALL DATAS FROM INFORMATION SCHEMA. 
+        # YOU MUST HAVE ROOT PRIVILEGES!!!
+        # -----------------------------------------
+        $query = "select table_name,column_name from(
+           select '&lt?php'as table_name,'' as column_name,'0a' as ordinamento
+           from dual
+		   union
+           select \"include_once \$_SERVER['DOCUMENT_ROOT'] . '/common/config.common.php';\" as table_name,'' as column_name,'0b' as ordinamento
+           from dual
+           union
+           select concat('class ',table_name,'{')as table_name,'' as column_name,concat(table_name,'1','0')as ordinamento
+           from columns
+           where table_schema = '" . $this->table_schema . "'
+           and table_name like '%" . $this->table_name . "%'
+           union
+           select table_name,column_name,ordinamento
+           from
+           (
+               select '     'as table_name ,concat('private $',column_name,';')as column_name,concat(table_name,'2',ordinal_position)as ordinamento
+               from columns
+               where table_schema = '" . $this->table_schema . "'
+               and table_name like '%" . $this->table_name . "%'
+               order by ordinamento,table_schema,table_name
+           )fields
+           union
+           select '}' as table_name,'' as column_name,concat(table_name,'3','0')as ordinamento
+           from columns
+           where table_schema = '" . $this->table_schema . "'
+           and table_name like '%" . $this->table_name . "%'
+           order by ordinamento
+           )base_table";
+        # -----------------------------------------
+        try {
+            $result = mysql_query($query);
+            if(!$result){
+               throw  new Exception(mysql_error());
+            }
+            
+            while ($row = mysql_fetch_assoc($result)) {
+                $array_result[] = $row['table_name'] . $row['column_name'] . A_CAPO;
+            }
+            $this->createMasterFileClassByArray($array_result);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    function createMasterFileClassByArray($array_result) {
+        #--------------Exception------------------------------------------
+        # In this step i'm creating the classes (getters and setters) in a file
+        #--------------------------------------------------------
+        if (!$array_result || !is_array($array_result)){
+            throw new Exception("Error. Array not valid.");
+        }
+        
+        $fw = fopen($this->filename, "w");
+        if(!$fw){
+            throw new Exception("Can't open filename for writing...");
+            
+        }
+        foreach ($array_result as $string_result) {
+            $string_result = str_replace('&lt?php', '<?php', $string_result);
+            fwrite($fw, $string_result);
+        }
+        fclose($fw);
+        #--------------------------------------------------------
+        # CREATE THE PROJECT FOLDER - WATCH OUT THE PERMISSIONS
+        #--------------------------------------------------------
+        if (file_exists($this->project_folder)) {
+            die("Warning! <em><font color='red' weight='bold'>" . $this->project_folder . "</font></em>" . DIR_EXIST_MSG);
+        }
+        if (php_uname('s') != "Linux") {
+            $old = umask(0);
+            if (!@mkdir($this->project_folder, 0777, TRUE)) {
+                die("Warning! <em><font color='red' weight='bold'>" . $this->project_folder . "</font></em>" . DIR_CREATE_MSG);
+            }
+            umask($old);
+            chmod($this->project_folder, 0777);
+        } else {
+            if (!@mkdir($this->project_folder, 0777, TRUE)) {
+                die("Warning! <em><font color='red' weight='bold'>" . $this->project_folder . "</font></em>" . DIR_CREATE_MSG);
+            }
+        }
     }
 
     /**
@@ -284,7 +445,7 @@ class MasterOfPuppets extends Connection {
 
         $result_string[] = "}";
         $result_string[] = "?&gt";
-        $fw = fopen(PROJECT_FOLDER . "/Class.Actions.php", "w");
+        $fw = fopen($this->project_folder . "/Class.Actions.php", "w");
         foreach ($result_string as $result_str) {
             $result_str = str_replace($open_php, "<?php", $result_str . A_CAPO);
             fwrite($fw, str_replace($close_php, "?>", $result_str));
@@ -570,7 +731,7 @@ class MasterOfPuppets extends Connection {
      */
     function generate_views() {
         $folder = $this->project_folder;
-        include_once $folder . '/Class.Actions.php';
+        include_once $this->project_folder . '/Class.Actions.php';
         $class = new ReflectionClass('Action');
         $methods = $class->getMethods();
         $arrayMethod = array();
@@ -754,12 +915,9 @@ class MasterOfPuppets extends Connection {
                 if ($i == count($array[0]) - 1) {
                     $this->result_string[] = TAB . TAB . TAB . TAB . $nome_del_campo . " = '\".\$" . $class_name[$conta] . "->get" . ucwords($nome_del_campo) . "().\"'\";" . A_CAPO;
                     $this->result_string[] = TAB . TAB . TAB . "\$query.=   \" where id='\".\$id.\"' \";";
-                    foreach ($primary as $primkey) {
-                        $this->result_string[] = TAB . TAB . TAB . "\$query.=   \" and " . $primkey . " = '\".\$" . $class_name[$conta] . "->get" . ucwords($primkey) . "().\"'\";";
-                    }
                 }
                 else
-                    $result_string [] = TAB . TAB . TAB . TAB . $nome_del_campo . " = '\".\$" . $class_name[$conta] . "->get" . ucwords($nome_del_campo) . "().\"',";
+                    $this->result_string[] = TAB . TAB . TAB . TAB . $nome_del_campo . " = '\".\$" . $class_name[$conta] . "->get" . ucwords($nome_del_campo) . "().\"',";
             }
 
             $this->result_string[] = TAB . TAB . TAB . "\$q = str_replace(\"'NULL'\", \"NULL\", \$query);";
