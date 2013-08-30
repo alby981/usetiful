@@ -165,7 +165,7 @@ class Usetiful extends Connection {
         
         $fw = fopen($this->filename, "w");
         if(!$fw){
-            throw new Exception("Can't open filename for writing...");
+            throw new Exception("Can't open filename for writing...Check folder permission");
             
         }
         foreach ($array_result as $string_result) {
