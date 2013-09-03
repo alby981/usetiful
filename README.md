@@ -1,15 +1,23 @@
-usetiful
-========
+========================================
+usetiful - Php / Mysql Dao Generator
+========================================
 
-What Usetiful?
+What Usetiful?<br/>
 Usetiful is a beatiful useful class generator for Php / Mysql.
 It allows you to create the classes for Create, Read and Update Mysql records.
 
-Why Usetiful?
+================
+
+Why Usetiful?<br/>
 The main purpose is to avoid writing many lines of code, saving your time.
 
-How Usetiful?
+================
+
+How Usetiful?<br/>
 it's really easy to use. Download the zip file, extract it to the root where you want. 
+
+================
+
 The Steps are the following:
 
 - create a simple Php file (see the example below);
@@ -17,21 +25,23 @@ The Steps are the following:
 - istantiate the object passing all the required variables in the constructor;
 - enjoy your created classes! ^_^
 
+================
 
 Example:
 
-<?php
-include_once 'usetiful.php';
-$server = "127.0.0.1"; //where your db is...
-$username = "root"; //db username
-$password = ""; //db password
-$schema = ""; //db name / schema
-$project_name = "folder1"; // where you would like to create your project folder 
-$mp = new Usetiful($server, $username, $password, $schema, $project_name, $table = false);
+<?php<br/>
+include_once 'usetiful.php';<br/>
+$server = "127.0.0.1"; //where your db is...<br/>
+$username = "root"; //db username<br/>
+$password = ""; //db password<br/>
+$schema = ""; //db name / schema<br/>
+$project_name = "folder1"; // where you would like to create your project folder <br/>
+$mp = new Usetiful($server, $username, $password, $schema, $project_name, $table = false);<br/>
 ?>
 
+========================
 IMPORTANT: For the correct execution of Usetiful you must have the mysql priviliges to select information_schema and possibly you should have administrator privileges of the webserver (also local)
-
+========================
 
 Usetiful creates a folder containing some files (the first 3 are the fundamentals layers):
 
